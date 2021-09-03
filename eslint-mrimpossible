@@ -1,0 +1,25 @@
+#!/bin/bash
+
+
+orig_lint="$(command -v eslint)"
+cwd="/home/callum/work/mrimpossible/"
+while [ ! -d "${cwd}/.vscode" ] || [ ! -e "${cwd}/.vscode/settings.json" ]
+do
+    cwd=$(dirname "${cwd}")
+    if [ "${cwd}" = "/" ]
+    then
+	break;
+    fi
+done;
+if [ "${cwd}" != "/" ]
+then
+	#"USING /usr/bin/yarn eslint"
+        eslint="$(grep -v '//' "${cwd}/.vscode/settings.json" | jsonlint-py3 -Sf | jq '."eslint.nodePath"' | tr -d '"')"
+	# echo "${cwd}${eslint}"/eslint/bin/eslint.js "$@"
+	"${cwd}${eslint}"/eslint/bin/eslint.js "$@"
+	#cd /home/callum/work/mrimpossible/ && /usr/bin/yarn eslint "$@"
+else
+# echo "USING ${orig_lint}"
+$orig_lint "$@" ;
+#cd /home/callum/work/mrimpossible/ && /usr/bin/yarn eslint "$@"
+fi;
